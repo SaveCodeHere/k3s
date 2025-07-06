@@ -1,0 +1,128 @@
+# Routes configuration for Traefik with Tailscale
+# This file contains additional routing rules that aren't defined in Docker labels
+
+http:
+  routers:
+    # Global HTTP to HTTPS redirect
+    http-to-https-redirect:
+      rule: "HostRegexp(`{host:.+}`)"
+      entryPoints:
+        - "alt-web"
+      middlewares:
+        - "https-redirect"
+      priority: 10000
+      service: "noop@internal"
+      
+    # API and dashboard routes
+    api-router:
+      rule: "Host(`um.tail16ca22.ts.net`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      service: "api@internal"
+      entryPoints:
+        - "alt-websecure"
+      middlewares:
+        - "admin-auth"
+        - "secure-headers"
+      priority: 100
+    
+    # Health check endpoint
+    ping-router:
+      rule: "Host(`um.tail16ca22.ts.net`) && PathPrefix(`/ping`)"
+      service: "ping@internal"
+      entryPoints:
+        - "alt-websecure"
+      priority: 90
+    
+    # Metrics endpoint
+    metrics-router:
+      rule: "Host(`um.tail16ca22.ts.net`) && PathPrefix(`/metrics`)"
+      service: "prometheus@internal"
+      entryPoints:
+        - "alt-websecure"
+      middlewares:
+        - "admin-auth"
+        - "secure-headers"
+      priority: 80
+
+    # Vault Service - Main route
+    vault-main-router:
+      rule: "Host(`vault.um.tail16ca22.ts.net`)"
+      service: "vault-svc@docker"
+      entryPoints:
+        - "alt-websecure"
+      priority: 100
+    
+    # Vault Service - UI route
+    vault-ui-router:
+      rule: "Host(`vault.um.tail16ca22.ts.net`) && PathPrefix(`/ui`)"
+      service: "vault-svc@docker"
+      entryPoints:
+        - "alt-websecure"
+      priority: 110
+    
+    # Portainer Service - Main route (REMOVED, use Docker labels only)
+    
+    # Pi-hole Service - Main route
+    pihole-main-router:
+      rule: "Host(`pihole.um.tail16ca22.ts.net`)"
+      service: "pihole-svc@docker"
+      entryPoints:
+        - "alt-websecure"
+      priority: 100
+    
+    # Pi-hole Admin route
+    pihole-admin-router:
+      rule: "Host(`pihole.um.tail16ca22.ts.net`) && PathPrefix(`/admin`)"
+      service: "pihole-svc@docker"
+      entryPoints:
+        - "alt-websecure"
+      priority: 110
+
+  services:
+    # Noop service for redirects
+    noop:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8081"
+    
+    # Vault service
+    vault-svc:
+      loadBalancer:
+        servers:
+          - url: "http://vault:8200"
+    
+    # Portainer service (REMOVED, use Docker labels only)
+    
+    # Pi-hole service
+    pihole-svc:
+      loadBalancer:
+        servers:
+          - url: "http://pihole:80"
+
+# TCP routing (if needed, currently commented out)
+# tcp:
+#   routers:
+#     # Example: Database access
+#     # postgres-router:
+#     #   rule: "HostSNI(`*`)"
+#     #   service: "postgres-service"
+#     #   entryPoints:
+#     #     - "postgres"
+#     
+#     # Example: SSH access
+#     # ssh-router:
+#     #   rule: "HostSNI(`*`)"
+#     #   service: "ssh-service"
+#     #   entryPoints:
+#     #     - "ssh"
+#
+#   services:
+#     # Example TCP services
+#     # postgres-service:
+#     #   loadBalancer:
+#     #     servers:
+#     #       - address: "postgres:5432"
+#     # 
+#     # ssh-service:
+#     #   loadBalancer:
+#     #     servers:
+#     #       - address: "ssh-server:22"

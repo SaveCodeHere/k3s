@@ -1,0 +1,13 @@
+http:
+  port: 80
+
+https:
+  port: 443
+  certificate: ""
+  private_key: ""
+
+internal_tls:
+  enabled: false
+
+hostname: harbor.nicstack.dev
+

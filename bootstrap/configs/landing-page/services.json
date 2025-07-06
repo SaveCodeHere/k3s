@@ -1,0 +1,121 @@
+[
+  {
+    "icon": "🏢",
+    "title": "Supabase Dashboard",
+    "description": "Complete database and authentication management platform",
+    "url": "https://supabase-api.nicstack.dev",
+    "category": "database"
+  },
+  {
+    "icon": "🧩",
+    "title": "Supabase Studio",
+    "description": "Web-based UI for managing Supabase projects",
+    "url": "https://supabase.nicstack.dev",
+    "category": "database"
+  },
+  {
+    "icon": "🐳",
+    "title": "Portainer",
+    "description": "Comprehensive Docker container management interface",
+    "url": "https://portainer.nicstack.dev",
+    "category": "infrastructure"
+  },
+  {
+    "icon": "📈",
+    "title": "Grafana",
+    "description": "Advanced metrics visualization and alerting dashboard",
+    "url": "https://grafana.nicstack.dev",
+    "category": "monitoring"
+  },
+  {
+    "icon": "🔥",
+    "title": "Spark Master",
+    "description": "Apache Spark cluster master node for distributed processing",
+    "url": "https://spark.nicstack.dev",
+    "category": "compute"
+  },
+  {
+    "icon": "📜",
+    "title": "Spark History Server",
+    "description": "Historical view of Spark jobs and stages",
+    "url": "https://spark-history.nicstack.dev",
+    "category": "compute"
+  },
+  {
+    "icon": "🌊",
+    "title": "Apache Airflow",
+    "description": "Workflow orchestration and task scheduling platform",
+    "url": "https://airflow.nicstack.dev",
+    "category": "orchestration"
+  },
+  {
+    "icon": "📓",
+    "title": "JupyterHub",
+    "description": "Multi-user Jupyter notebook environment for data science",
+    "url": "https://jupyter.nicstack.dev/hub",
+    "category": "development"
+  },
+  {
+    "icon": "🧠",
+    "title": "VS Code Server",
+    "description": "Remote development environment powered by VS Code",
+    "url": "https://code.nicstack.dev",
+    "category": "development"
+  },
+  {
+    "icon": "🚥",
+    "title": "Traefik",
+    "description": "Modern reverse proxy with automatic service discovery",
+    "url": "https://traefik.nicstack.dev",
+    "category": "proxy"
+  },
+  {
+    "icon": "💾",
+    "title": "MinIO",
+    "description": "High-performance, S3-compatible object storage",
+    "url": "https://minio.nicstack.dev",
+    "category": "storage"
+  },
+  {
+    "icon": "📊",
+    "title": "Prometheus",
+    "description": "Time-series monitoring system and alerting toolkit",
+    "url": "https://prometheus.nicstack.dev",
+    "category": "monitoring"
+  },
+  {
+    "icon": "🚀",
+    "title": "Speedtest",
+    "description": "Internet speed testing utility",
+    "url": "https://speedtest.nicstack.dev",
+    "category": "utility"
+  },
+  {
+    "icon": "🛡️",
+    "title": "Duplicati",
+    "description": "Secure backup software with web-based management",
+    "url": "https://backup.nicstack.dev",
+    "category": "backup"
+  },
+  {
+    "icon": "📦",
+    "title": "Diun",
+    "description": "Docker image update notifier",
+    "url": "https://diun.nicstack.dev",
+    "category": "monitoring"
+  },
+  {
+    "icon": "❤️",
+    "title": "Healthchecks",
+    "description": "Cron job monitoring and alerting",
+    "url": "https://healthchecks.nicstack.dev",
+    "category": "monitoring"
+  },
+  {
+    "icon": "🏠",
+    "title": "Homer Dashboard",
+    "description": "Personal homepage and services launcher",
+    "url": "https://dashboard.nicstack.dev",
+    "category": "utility"
+  }
+]

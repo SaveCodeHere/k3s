@@ -1,0 +1,100 @@
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    },
+    "80": {
+      "HTTP": true
+    }
+  },
+  "Web": {
+    "um.tail16ca22.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://traefik:8080",
+          "Host": "um.tail16ca22.ts.net",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        }
+      }
+    },
+    "um.tail16ca22.ts.net:80": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://traefik:8081",
+          "Host": "um.tail16ca22.ts.net"
+        }
+      }
+    },
+    "vault.um.tail16ca22.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://vault:8200",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        },
+        "/ui/": {
+          "Proxy": "http://vault:8200/ui/",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        }
+      }
+    },
+    "vault.um.tail16ca22.ts.net:80": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://vault:8200"
+        },
+        "/ui/": {
+          "Proxy": "http://vault:8200/ui/"
+        }
+      }
+    },
+    "portainer.um.tail16ca22.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://portainer:9000",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        }
+      }
+    },
+    "portainer.um.tail16ca22.ts.net:80": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://portainer:9000"
+        }
+      }
+    },
+    "pihole.um.tail16ca22.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://pihole:80",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        },
+        "/admin/": {
+          "Proxy": "http://pihole:80/admin/",
+          "ProxyOpts": {
+            "InsecureSkipVerify": true
+          }
+        }
+      }
+    },
+    "pihole.um.tail16ca22.ts.net:80": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://pihole:80"
+        },
+        "/admin/": {
+          "Proxy": "http://pihole:80/admin/"
+        }
+      }
+    }
+  }
+}

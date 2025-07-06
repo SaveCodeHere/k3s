@@ -1,0 +1,87 @@
+# Dynamic configuration for Traefik with Tailscale
+# This file contains middlewares, TLS configuration, and other dynamic settings
+
+http:
+  middlewares:
+    # Basic authentication
+    admin-auth:
+      basicAuth:
+        users:
+          - "admin:$2b$12$MhpB5g.4f7K8xREtnkzbGeG0rplVvJE4iOCALT.Rp4TjQxvSN/2cK"
+    
+    # IP whitelist for local/private networks
+    lan-ip-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - "127.0.0.1/32"
+          - "10.0.0.0/8"
+          - "192.168.0.0/16"
+          - "172.16.0.0/12"
+          - "100.64.0.0/10" # Tailscale CGNAT range
+    
+    # Security headers
+    secure-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        customFrameOptionsValue: "SAMEORIGIN"
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+        customResponseHeaders:
+          X-Powered-By: ""
+          Server: ""
+    
+    # HTTPS redirect
+    https-redirect:
+      redirectScheme:
+        scheme: "https"
+        permanent: true
+    
+    # Path stripping for services
+    strip-prefix-portainer:
+      stripPrefix:
+        prefixes:
+          - "/portainer"
+    
+    strip-prefix-pihole:
+      stripPrefix:
+        prefixes:
+          - "/pihole"
+    
+    strip-prefix-vault:
+      stripPrefix:
+        prefixes:
+          - "/vault"
+    
+    # Combined middlewares
+    default-chain:
+      chain:
+        middlewares:
+          - secure-headers
+          - lan-ip-whitelist
+    
+    admin-chain:
+      chain:
+        middlewares:
+          - secure-headers
+          - lan-ip-whitelist
+
+tls:
+  options:
+    default:
+      minVersion: "VersionTLS12"
+      sniStrict: false
+  certificates:
+    - certFile: "/etc/traefik/certs/wildcard.crt"
+      keyFile: "/etc/traefik/certs/wildcard.key"
+      stores:
+        - default
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/etc/traefik/certs/wildcard.crt"
+        keyFile: "/etc/traefik/certs/wildcard.key"
+
