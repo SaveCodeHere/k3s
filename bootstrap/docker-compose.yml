@@ -53,6 +53,8 @@ services:
       - "8080:8080" # For the dashboard
       - "8081:8081" # Alternative HTTP port
       - "8443:8443" # Alternative HTTPS port
+      - "8880:8880" # Public HTTP (web)
+      - "8444:8444" # Public HTTPS (websecure)
       # Standard ports are already allocated to Tailscale
       # - "80:80"     # Standard HTTP port 
       # - "443:443"   # Standard HTTPS port
@@ -120,6 +122,12 @@ services:
       - "traefik.http.routers.portainer.priority=10000"
       - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+      # HTTP router for Tailscale proxy (entrypoint alt-web)
+      - "traefik.http.routers.portainer-http.rule=Host(`portainer.um.tail16ca22.ts.net`)"
+      - "traefik.http.routers.portainer-http.entrypoints=alt-web"
+      - "traefik.http.routers.portainer-http.service=portainer-svc"
+      - "traefik.http.routers.portainer-http.priority=9000"
+      - "traefik.http.routers.portainer-http.middlewares=https-redirect@file"
       # HTTP to HTTPS redirect for this specific service
       - "traefik.http.routers.portainer-http.rule=Host(`portainer.um.tail16ca22.ts.net`)"
       - "traefik.http.routers.portainer-http.entrypoints=alt-web"
@@ -216,18 +224,32 @@ services:
       - foundation_network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.landing-page.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/`)"
-      - "traefik.http.routers.landing-page.entrypoints=alt-websecure"
-      - "traefik.http.routers.landing-page.service=landing-page-svc"
-      - "traefik.http.routers.landing-page.middlewares=default-chain@file"
-      - "traefik.http.routers.landing-page.priority=10"  # Changed from 1
+      # Private (Tailscale) router
+      - "traefik.http.routers.landing-page-private.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/`)"
+      - "traefik.http.routers.landing-page-private.entrypoints=alt-websecure"
+      - "traefik.http.routers.landing-page-private.service=landing-page-svc"
+      - "traefik.http.routers.landing-page-private.middlewares=default-chain@file"
+      - "traefik.http.routers.landing-page-private.priority=10"
+      # HTTP to HTTPS redirect for private
+      - "traefik.http.routers.landing-page-private-http.rule=Host(`um.tail16ca22.ts.net`)"
+      - "traefik.http.routers.landing-page-private-http.entrypoints=alt-web"
+      - "traefik.http.routers.landing-page-private-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.landing-page-private-http.service=landing-page-svc"
+      - "traefik.http.routers.landing-page-private-http.priority=9000"
+      # Public (Cloudflare) router
+      - "traefik.http.routers.landing-page-public.rule=Host(`landing.nicstack.dev`) && PathPrefix(`/`)"
+      - "traefik.http.routers.landing-page-public.entrypoints=websecure"
+      - "traefik.http.routers.landing-page-public.service=landing-page-svc"
+      - "traefik.http.routers.landing-page-public.middlewares=default-chain@file"
+      - "traefik.http.routers.landing-page-public.priority=20"
+      # HTTP to HTTPS redirect for public
+      - "traefik.http.routers.landing-page-public-http.rule=Host(`landing.nicstack.dev`)"
+      - "traefik.http.routers.landing-page-public-http.entrypoints=web"
+      - "traefik.http.routers.landing-page-public-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.landing-page-public-http.service=landing-page-svc"
+      - "traefik.http.routers.landing-page-public-http.priority=9010"
+      # Shared service definition
       - "traefik.http.services.landing-page-svc.loadbalancer.server.port=80"
-      # HTTP to HTTPS redirect for this specific service
-      - "traefik.http.routers.landing-page-http.rule=Host(`um.tail16ca22.ts.net`)"
-      - "traefik.http.routers.landing-page-http.entrypoints=alt-web"
-      - "traefik.http.routers.landing-page-http.middlewares=https-redirect@file"
-      - "traefik.http.routers.landing-page-http.service=landing-page-svc"
-      - "traefik.http.routers.landing-page-http.priority=9000"
 
 networks:
   foundation_network:

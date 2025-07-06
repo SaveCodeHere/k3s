@@ -28,6 +28,12 @@ entryPoints:
     address: ":8443"
     http:
       tls: {}
+  web:
+    address: ":8880" # Use 8880 if 80 is taken by Tailscale
+  websecure:
+    address: ":8444" # Use 8444 if 443 is taken by Tailscale
+    http:
+      tls: {}
   traefik:
     address: ":8080"
 
