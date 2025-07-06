@@ -60,6 +60,7 @@ services:
       - ./configs/traefik/dynamic.yml:/etc/traefik/dynamic/dynamic.yml:ro
       - ./configs/traefik/routes.yml:/etc/traefik/dynamic/routes.yml:ro
       - ./configs/certs:/etc/traefik/certs:ro
+      - ./data/traefik/acme:/etc/traefik/acme
       
     networks:
       - foundation_network
