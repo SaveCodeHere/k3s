@@ -279,6 +279,7 @@ services:
       - "traefik.http.routers.landing-page-public.service=landing-page-svc"
       - "traefik.http.routers.landing-page-public.middlewares=default-chain@file"
       - "traefik.http.routers.landing-page-public.priority=20"
+      - "traefik.http.routers.landing-page-public.tls.certresolver=letsencrypt"
       # HTTP to HTTPS redirect for public
       - "traefik.http.routers.landing-page-public-http.rule=Host(`landing.nicstack.dev`)"
       - "traefik.http.routers.landing-page-public-http.entrypoints=web"
