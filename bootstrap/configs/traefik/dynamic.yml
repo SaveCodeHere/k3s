@@ -13,11 +13,15 @@ http:
     lan-ip-whitelist:
       ipWhiteList:
         sourceRange:
-          - "127.0.0.1/32"
-          - "10.0.0.0/8"
-          - "192.168.0.0/16"
-          - "172.16.0.0/12"
-          - "100.64.0.0/10" # Tailscale CGNAT range
+          - "127.0.0.1/32"          # IPv4 localhost
+          - "::1/128"               # IPv6 localhost
+          - "10.0.0.0/8"            # Private IPv4
+          - "192.168.0.0/16"        # Private IPv4
+          - "172.16.0.0/12"         # Private IPv4
+          - "172.18.0.0/16"         # Docker bridge network
+          - "100.64.0.0/10"         # Tailscale CGNAT range
+          - "fd00::/8"              # IPv6 Unique Local Addresses
+          - "fe80::/10"             # IPv6 Link-Local
     
     # Security headers
     secure-headers:

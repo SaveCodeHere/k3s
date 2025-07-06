@@ -29,9 +29,9 @@ entryPoints:
     http:
       tls: {}
   web:
-    address: ":8880" # Use 8880 if 80 is taken by Tailscale
+    address: ":80"
   websecure:
-    address: ":8444" # Use 8444 if 443 is taken by Tailscale
+    address: ":443"
     http:
       tls: {}
   traefik:
@@ -52,3 +52,18 @@ metrics:
     addServicesLabels: true
 
 ping: {}
+
+# Let's Encrypt ACME configuration
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@nicstack.dev  # Replace with your email
+      storage: /etc/traefik/acme/acme.json
+      # Use staging for testing, switch to production later
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      httpChallenge:
+        entryPoint: web
+      # Alternative: DNS challenge for wildcard certs
+      # dnsChallenge:
+      #   provider: cloudflare
+      #   delayBeforeCheck: 60
