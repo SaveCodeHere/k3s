@@ -7,7 +7,7 @@
     "um.tail16ca22.ts.net:443": {
       "Handlers": {
         "/": {
-          "Proxy": "https://traefik:8443",
+          "Proxy": "https://172.18.0.7:8443",
           "Host": "um.tail16ca22.ts.net",
           "ProxyOpts": { "InsecureSkipVerify": true }
         }
@@ -16,7 +16,7 @@
     "um.tail16ca22.ts.net:80": {
       "Handlers": {
         "/": {
-          "Proxy": "http://traefik:8081",
+          "Proxy": "http://172.18.0.7:8081",
           "Host": "um.tail16ca22.ts.net"
         }
       }
@@ -24,7 +24,7 @@
     "vault.um.tail16ca22.ts.net:443": {
       "Handlers": {
         "/": {
-          "Proxy": "https://traefik:8443",
+          "Proxy": "https://172.18.0.7:8443",
           "Host": "vault.um.tail16ca22.ts.net",
           "ProxyOpts": { "InsecureSkipVerify": true }
         }
@@ -33,7 +33,7 @@
     "vault.um.tail16ca22.ts.net:80": {
       "Handlers": {
         "/": {
-          "Proxy": "http://traefik:8081",
+          "Proxy": "http://172.18.0.7:8081",
           "Host": "vault.um.tail16ca22.ts.net"
         }
       }
@@ -41,7 +41,7 @@
     "portainer.um.tail16ca22.ts.net:443": {
       "Handlers": {
         "/": {
-          "Proxy": "https://traefik:8443",
+          "Proxy": "https://172.18.0.7:8443",
           "Host": "portainer.um.tail16ca22.ts.net",
           "ProxyOpts": { "InsecureSkipVerify": true }
         }
@@ -50,7 +50,7 @@
     "portainer.um.tail16ca22.ts.net:80": {
       "Handlers": {
         "/": {
-          "Proxy": "http://traefik:8081",
+          "Proxy": "http://172.18.0.7:8081",
           "Host": "portainer.um.tail16ca22.ts.net"
         }
       }
@@ -58,7 +58,7 @@
     "pihole.um.tail16ca22.ts.net:443": {
       "Handlers": {
         "/": {
-          "Proxy": "https://traefik:8443",
+          "Proxy": "https://172.18.0.7:8443",
           "Host": "pihole.um.tail16ca22.ts.net",
           "ProxyOpts": { "InsecureSkipVerify": true }
         }
@@ -67,7 +67,7 @@
     "pihole.um.tail16ca22.ts.net:80": {
       "Handlers": {
         "/": {
-          "Proxy": "http://traefik:8081",
+          "Proxy": "http://172.18.0.7:8081",
           "Host": "pihole.um.tail16ca22.ts.net"
         }
       }

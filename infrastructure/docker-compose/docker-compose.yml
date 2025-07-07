@@ -1,40 +1,6 @@
 services:
 
-  # ----------------------------------------------------------------
-  # TAILSCALE
-  # ----------------------------------------------------------------
-  tailscale:
-    image: tailscale/tailscale:v1.66.4
-    container_name: tailscale
-    restart: unless-stopped
-    hostname: nicstack
-    entrypoint: /config/entrypoint.sh
-    environment:
-      - TS_AUTHKEY=${TS_AUTHKEY:-}
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_USERSPACE=true
-      - TS_SERVE_CONFIG=/config/serve.json
-      # Alternative: Use interactive login instead of auth key
-      # - TS_ACCEPT_DNS=true
-    volumes:
-      - /data/foundation/tailscale:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-      - ./configs/tailscale:/config
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    sysctls:
-      - net.ipv4.ip_forward=1
-      - net.ipv6.conf.all.forwarding=1
-    networks:
-      - foundation_network
-    # Remove ports 80/443 to free them for Traefik. Tailscale will use userspace networking for serve, or only bind to Tailscale interface.
-    # ports:
-    #   - "443:443"
-    #   - "80:80"
-    # Duplicate environment block removed
-      # - TS_ACCEPT_DNS=true
-    # All Traefik labels removed to avoid router/service conflicts
+
 
   # ----------------------------------------------------------------
   # CORE: PROXY & LOAD BALANCER
@@ -60,12 +26,10 @@ services:
       - ./configs/traefik/dynamic.yml:/etc/traefik/dynamic/dynamic.yml:ro
       - ./configs/traefik/routes.yml:/etc/traefik/dynamic/routes.yml:ro
       - ./configs/certs:/etc/traefik/certs:ro
-      - ./data/traefik/acme:/etc/traefik/acme
+      - /data/foundation/traefik/letsencrypt:/etc/traefik/acme
       
     networks:
       - foundation_network
-    depends_on:
-      - tailscale
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.admin-auth.basicauth.users=${ADMIN_USER_HASH}"
@@ -113,18 +77,30 @@ services:
       - foundation_network
     labels:
       - "traefik.enable=true"
-      # Private (Tailscale) router
+      # Private (Tailscale) subdomain router
       - "traefik.http.routers.portainer-private.rule=Host(`portainer.um.tail16ca22.ts.net`) && PathPrefix(`/`)"
       - "traefik.http.routers.portainer-private.entrypoints=websecure"
       - "traefik.http.routers.portainer-private.service=portainer-svc"
       - "traefik.http.routers.portainer-private.middlewares=default-chain@file"
       - "traefik.http.routers.portainer-private.priority=10"
-      # HTTP to HTTPS redirect for private
+      # Private (Tailscale) path-based router
+      - "traefik.http.routers.portainer-path.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/portainer`)"
+      - "traefik.http.routers.portainer-path.entrypoints=websecure"
+      - "traefik.http.routers.portainer-path.service=portainer-svc"
+      - "traefik.http.routers.portainer-path.middlewares=default-chain@file,portainer-stripprefix,portainer-headers"
+      - "traefik.http.routers.portainer-path.priority=100"
+      # HTTP to HTTPS redirect for private subdomain
       - "traefik.http.routers.portainer-private-http.rule=Host(`portainer.um.tail16ca22.ts.net`)"
       - "traefik.http.routers.portainer-private-http.entrypoints=web"
       - "traefik.http.routers.portainer-private-http.middlewares=https-redirect@file"
       - "traefik.http.routers.portainer-private-http.service=portainer-svc"
       - "traefik.http.routers.portainer-private-http.priority=9000"
+      # HTTP to HTTPS redirect for path-based
+      - "traefik.http.routers.portainer-path-http.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/portainer`)"
+      - "traefik.http.routers.portainer-path-http.entrypoints=web"
+      - "traefik.http.routers.portainer-path-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.portainer-path-http.service=portainer-svc"
+      - "traefik.http.routers.portainer-path-http.priority=9100"
       # Public (Cloudflare) router (optional, if you want public access)
       # - "traefik.http.routers.portainer-public.rule=Host(`portainer.nicstack.dev`) && PathPrefix(`/`)"
       # - "traefik.http.routers.portainer-public.entrypoints=websecure"
@@ -139,6 +115,10 @@ services:
       # - "traefik.http.routers.portainer-public-http.priority=9010"
       # Shared service definition
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+      # Strip prefix middleware for path-based routing
+      - "traefik.http.middlewares.portainer-stripprefix.stripprefix.prefixes=/portainer"
+      # Add headers middleware for proper asset loading
+      - "traefik.http.middlewares.portainer-headers.headers.customrequestheaders.X-Forwarded-Prefix=/portainer"
 
   pihole:
     image: pihole/pihole:latest
@@ -164,18 +144,30 @@ services:
       - foundation_network
     labels:
       - "traefik.enable=true"
-      # Private (Tailscale) router
+      # Private (Tailscale) subdomain router
       - "traefik.http.routers.pihole-private.rule=Host(`pihole.um.tail16ca22.ts.net`) && PathPrefix(`/`)"
       - "traefik.http.routers.pihole-private.entrypoints=websecure"
       - "traefik.http.routers.pihole-private.service=pihole-svc"
       - "traefik.http.routers.pihole-private.middlewares=default-chain@file"
       - "traefik.http.routers.pihole-private.priority=10"
-      # HTTP to HTTPS redirect for private
+      # Private (Tailscale) path-based router
+      - "traefik.http.routers.pihole-path.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/pihole`)"
+      - "traefik.http.routers.pihole-path.entrypoints=websecure"
+      - "traefik.http.routers.pihole-path.service=pihole-svc"
+      - "traefik.http.routers.pihole-path.middlewares=default-chain@file,pihole-stripprefix,pihole-headers"
+      - "traefik.http.routers.pihole-path.priority=100"
+      # HTTP to HTTPS redirect for private subdomain
       - "traefik.http.routers.pihole-private-http.rule=Host(`pihole.um.tail16ca22.ts.net`)"
       - "traefik.http.routers.pihole-private-http.entrypoints=web"
       - "traefik.http.routers.pihole-private-http.middlewares=https-redirect@file"
       - "traefik.http.routers.pihole-private-http.service=pihole-svc"
       - "traefik.http.routers.pihole-private-http.priority=9000"
+      # HTTP to HTTPS redirect for path-based
+      - "traefik.http.routers.pihole-path-http.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/pihole`)"
+      - "traefik.http.routers.pihole-path-http.entrypoints=web"
+      - "traefik.http.routers.pihole-path-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.pihole-path-http.service=pihole-svc"
+      - "traefik.http.routers.pihole-path-http.priority=9100"
       # Public (Cloudflare) router (optional, if you want public access)
       # - "traefik.http.routers.pihole-public.rule=Host(`pihole.nicstack.dev`) && PathPrefix(`/`)"
       # - "traefik.http.routers.pihole-public.entrypoints=websecure"
@@ -190,6 +182,10 @@ services:
       # - "traefik.http.routers.pihole-public-http.priority=9010"
       # Shared service definition
       - "traefik.http.services.pihole-svc.loadbalancer.server.port=80"
+      # Strip prefix middleware for path-based routing
+      - "traefik.http.middlewares.pihole-stripprefix.stripprefix.prefixes=/pihole"
+      # Add headers middleware for proper asset loading
+      - "traefik.http.middlewares.pihole-headers.headers.customrequestheaders.X-Forwarded-Prefix=/pihole"
 
   # ----------------------------------------------------------------
   # CRITICAL INFRASTRUCTURE: SECRETS & REGISTRY
@@ -214,18 +210,30 @@ services:
       - foundation_network
     labels:
       - "traefik.enable=true"
-      # Private (Tailscale) router
+      # Private (Tailscale) subdomain router
       - "traefik.http.routers.vault-private.rule=Host(`vault.um.tail16ca22.ts.net`) && PathPrefix(`/`)"
       - "traefik.http.routers.vault-private.entrypoints=websecure"
       - "traefik.http.routers.vault-private.service=vault-svc"
       - "traefik.http.routers.vault-private.middlewares=default-chain@file"
       - "traefik.http.routers.vault-private.priority=10"
-      # HTTP to HTTPS redirect for private
+      # Private (Tailscale) path-based router
+      - "traefik.http.routers.vault-path.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/vault`)"
+      - "traefik.http.routers.vault-path.entrypoints=websecure"
+      - "traefik.http.routers.vault-path.service=vault-svc"
+      - "traefik.http.routers.vault-path.middlewares=default-chain@file,vault-stripprefix,vault-headers"
+      - "traefik.http.routers.vault-path.priority=100"
+      # HTTP to HTTPS redirect for private subdomain
       - "traefik.http.routers.vault-private-http.rule=Host(`vault.um.tail16ca22.ts.net`)"
       - "traefik.http.routers.vault-private-http.entrypoints=web"
       - "traefik.http.routers.vault-private-http.middlewares=https-redirect@file"
       - "traefik.http.routers.vault-private-http.service=vault-svc"
       - "traefik.http.routers.vault-private-http.priority=9000"
+      # HTTP to HTTPS redirect for path-based
+      - "traefik.http.routers.vault-path-http.rule=Host(`um.tail16ca22.ts.net`) && PathPrefix(`/vault`)"
+      - "traefik.http.routers.vault-path-http.entrypoints=web"
+      - "traefik.http.routers.vault-path-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.vault-path-http.service=vault-svc"
+      - "traefik.http.routers.vault-path-http.priority=9100"
       # Public (Cloudflare) router (optional, if you want public access)
       # - "traefik.http.routers.vault-public.rule=Host(`vault.nicstack.dev`) && PathPrefix(`/`)"
       # - "traefik.http.routers.vault-public.entrypoints=websecure"
@@ -240,6 +248,10 @@ services:
       # - "traefik.http.routers.vault-public-http.priority=9010"
       # Shared service definition
       - "traefik.http.services.vault-svc.loadbalancer.server.port=8200"
+      # Strip prefix middleware for path-based routing
+      - "traefik.http.middlewares.vault-stripprefix.stripprefix.prefixes=/vault"
+      # Add headers middleware for proper asset loading
+      - "traefik.http.middlewares.vault-headers.headers.customrequestheaders.X-Forwarded-Prefix=/vault"
 
   # ----------------------------------------------------------------
   # WEB SERVICES

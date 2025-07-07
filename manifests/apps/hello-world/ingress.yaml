@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-world-ingress
+  namespace: default
+  labels:
+    app: hello-world
+  annotations:
+    # Use K3s Traefik entrypoints (web=8880, websecure=8888)
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Optional: Add middleware for additional features
+    # traefik.ingress.kubernetes.io/router.middlewares: default-rate-limit@kubernetescrd
+spec:
+  tls:
+  - hosts:
+    - hello.nicstack.dev
+    secretName: hello-world-tls
+  rules:
+  # Host-based routing for public domain
+  - host: hello.nicstack.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-world-service
+            port:
+              number: 80
+  # Path-based routing for local access via IP
+  - http:
+      paths:
+      - path: /hello
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-world-service
+            port:
+              number: 80

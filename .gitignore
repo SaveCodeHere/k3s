@@ -1,8 +1,74 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
 *.env
+.env
+.env.local
+.env.*.local
 secrets_config.json
 *.secrets.json
 *secrets_config.py
-.env
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Docker
+.docker/
+
+# Kubernetes secrets and sensitive data
+*secret*.yaml
+*secret*.yml
+secrets/
+*.key
+*.crt
+*.pem
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Terraform (if used later)
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+
+# Helm (if used later)
+charts/*.tgz
+.helm/
+
+# Temporary files
+tmp/
+temp/
+
+# Local data directories
+data/
+volumes/
+
+# Configuration backups (keep only latest)
+infrastructure/docker-compose/configs/backup-*/
 .env.local
 .env.production
 .env.staging

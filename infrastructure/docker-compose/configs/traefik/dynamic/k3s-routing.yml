@@ -1,0 +1,53 @@
+http:
+  routers:
+    # Route K3s apps via subdomain to K3s Traefik
+    k3s-apps:
+      rule: "HostRegexp(`{subdomain:[a-z0-9-]+}.nicstack.dev`)"
+      service: "k3s-traefik"
+      entryPoints:
+        - "websecure"
+      tls:
+        certResolver: "letsencrypt"
+    
+    # Route K3s apps via path to K3s Traefik  
+    k3s-apps-path:
+      rule: "Host(`um.tail16ca22.ts.net`) && PathPrefix(`/k3s/`)"
+      service: "k3s-traefik-path"
+      entryPoints:
+        - "alt-websecure"
+      middlewares:
+        - "k3s-strip-prefix"
+
+  services:
+    # Forward to K3s Traefik HTTPS port
+    k3s-traefik:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.1.49:30987"
+          - url: "https://192.168.1.50:30987"
+        healthCheck:
+          path: "/ping"
+          interval: "30s"
+          timeout: "5s"
+        serversTransport: "k3s-transport"
+    
+    # Forward to K3s Traefik HTTP port for path-based routing
+    k3s-traefik-path:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.49:32368"
+          - url: "http://192.168.1.50:32368"
+        healthCheck:
+          path: "/ping"
+          interval: "30s"
+          timeout: "5s"
+
+  middlewares:
+    k3s-strip-prefix:
+      stripPrefix:
+        prefixes:
+          - "/k3s"
+
+  serversTransports:
+    k3s-transport:
+      insecureSkipVerify: true
