@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rancher-tailscale
+  namespace: cattle-system
+  annotations:
+    # Use external Traefik (Docker Compose) instead of K3s Traefik
+    kubernetes.io/ingress.class: "external"
+    # Specify the external ingress controller
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Disable K3s Traefik for this ingress
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain@file
+spec:
+  rules:
+  - host: rancher.um.tail16ca22.ts.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rancher
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - rancher.um.tail16ca22.ts.net
+    secretName: rancher-tls-secret

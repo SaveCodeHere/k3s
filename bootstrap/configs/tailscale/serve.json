@@ -71,6 +71,21 @@
           "Host": "pihole.um.tail16ca22.ts.net"
         }
       }
+    },
+    "rancher.um.tail16ca22.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "https://100.84.168.38:30443",
+          "ProxyOpts": { "InsecureSkipVerify": true }
+        }
+      }
+    },
+    "rancher.um.tail16ca22.ts.net:80": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://100.84.168.38:30080"
+        }
+      }
     }
   }
 }
