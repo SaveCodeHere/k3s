@@ -1,0 +1,65 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      podAnnotations:
+        prometheus.io/port: "8082"
+        prometheus.io/scrape: "true"
+    
+    # Custom ports to avoid conflicts with Docker Compose Traefik
+    entryPoints:
+      web:
+        address: ":8880"
+      websecure:
+        address: ":8888"
+      traefik:
+        address: ":9000"
+    
+    ports:
+      web:
+        port: 8880
+        exposedPort: 8880
+      websecure:
+        port: 8888
+        exposedPort: 8888
+      traefik:
+        port: 9000
+        exposedPort: 9000
+    
+    providers:
+      kubernetesIngress:
+        publishedService:
+          enabled: true
+    
+    priorityClassName: "system-cluster-critical"
+    
+    image:
+      repository: "rancher/mirrored-library-traefik"
+      tag: "3.3.6"
+    
+    tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+    
+    service:
+      ipFamilyPolicy: "PreferDualStack"
+      type: LoadBalancer
+      spec:
+        externalIPs:
+        - "192.168.1.49"
+        - "192.168.1.50"
+    
+    # Enable dashboard
+    api:
+      dashboard: true
+      insecure: true

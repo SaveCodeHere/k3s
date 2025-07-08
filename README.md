@@ -73,10 +73,10 @@ kubectl apply -f manifests/monitoring/
 - **Monitoring**: K8s-native observability stack
 
 ### Access Methods
-- **Local**: Direct container ports
-- **Tailscale HTTPS**: Secure remote access via `um.tail16ca22.ts.net`
-- **Traefik Routing**: Handles both Docker and K8s ingress
-- **K3s NodePorts**: Direct Kubernetes service access
+- **Local**: Direct container ports (e.g., `localhost:8082`)
+- **Tailscale HTTPS**: Secure remote access directly to services (e.g., `https://um.tail16ca22.ts.net/`)
+- **Traefik Public Routing**: Handles public domain access (e.g., `https://landing.nicstack.dev`)
+- **K3s NodePorts**: Direct Kubernetes service access (e.g., `https://um.tail16ca22.ts.net:30443/`)
 
 ## 📖 Documentation
 
@@ -106,13 +106,13 @@ kubectl apply -f manifests/monitoring/
 
 | Service | Primary Access | Alternative |
 |---------|----------------|-------------|
-| **Main Dashboard** | `https://um.tail16ca22.ts.net/` | `http://localhost:8081/` |
+| **Landing Page** | `https://um.tail16ca22.ts.net/` | `http://localhost:8082/` |
+| **Traefik Dashboard** | `https://um.tail16ca22.ts.net/traefik/` | `http://localhost:8080/` |
 | **Portainer** | `https://um.tail16ca22.ts.net:9443/` | `http://localhost:9000/` |
 | **Vault** | `https://um.tail16ca22.ts.net:8243/` | `http://localhost:8200/` |
 | **Pi-hole** | `https://um.tail16ca22.ts.net:8543/` | `http://localhost:8053/` |
 | **Rancher** | `https://um.tail16ca22.ts.net:30443/dashboard/auth/login` | `https://localhost:30443/` |
 | **Hello World** | `https://um.tail16ca22.ts.net:8888/hello` | `https://localhost:8888/hello` |
-| **Traefik** | `https://um.tail16ca22.ts.net:8443/` | `http://localhost:8080/` |
 
 ---
 
