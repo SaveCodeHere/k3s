@@ -1,0 +1,34 @@
+# values.yaml for K3s Home Lab
+replicas: 1
+# --- Access Method ---
+# We disable ingress to use NodePort for simple IP-based access.
+ingress:
+  enabled: false
+
+# The service type will be NodePort because ingress is disabled.
+# You can optionally specify the ports you want to use.
+service:
+  type: NodePort
+  nodePort: 30080   # Port for HTTP
+  nodePortTls: 30443 # Port for HTTPS (this is the one you'll use)
+
+
+# --- Scheduling ---
+# Ensure Rancher only runs on the K3s server/control-plane node.
+rancher:
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+  
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: "node-role.kubernetes.io/control-plane"
+                operator: In
+                values:
+                  - "true"

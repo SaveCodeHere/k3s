@@ -1,0 +1,40 @@
+# custom-values.yaml
+
+# Affinity for the main cert-manager controller pod
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: In
+          values:
+          - "true"
+
+# Affinity for the cainjector pod
+cainjector:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: In
+            values:
+            - "true"
+
+# Affinity for the webhook pod
+webhook:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: In
+            values:
+            - "true"
+
+# For a new installation, this must be true
+crds:
+  enabled: true
