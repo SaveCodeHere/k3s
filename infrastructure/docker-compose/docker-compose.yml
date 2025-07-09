@@ -1,38 +1,38 @@
 services:
   # Single Traefik handling both public and private routing
-  traefik:
-    image: traefik:v3.4.3
-    container_name: traefik
-    restart: unless-stopped
+  # traefik:
+  #   image: traefik:v3.4.3
+  #   container_name: traefik
+  #   restart: unless-stopped
 
-    ports:
-      - "80:80"     # Public HTTP (redirects to HTTPS)
-      - "443:443"   # Public/Private HTTPS
-      - "8080:8080" # Dashboard
-    environment:
-      - TZ=Europe/Copenhagen
-      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+  #   ports:
+  #     - "80:80"     # Public HTTP (redirects to HTTPS)
+  #     - "443:443"   # Public/Private HTTPS
+  #     - "8080:8080" # Dashboard
+  #   environment:
+  #     - TZ=Europe/Copenhagen
+  #     - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
 
-    networks:
-      - infra_network
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /data/foundation/traefik/letsencrypt:/certs
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedByDefault=false
-      - --providers.docker.network=infra_network
-      - --api.dashboard=true
-      - --api.insecure=true
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.delaybeforecheck=20
-      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.websecure.http.tls=true
+  #   networks:
+  #     - infra_network
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - /data/foundation/traefik/letsencrypt:/certs
+  #   command:
+  #     - --providers.docker=true
+  #     - --providers.docker.exposedByDefault=false
+  #     - --providers.docker.network=infra_network
+  #     - --api.dashboard=true
+  #     - --api.insecure=true
+  #     - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+  #     - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  #     - --certificatesresolvers.letsencrypt.acme.dnschallenge.delaybeforecheck=20
+  #     - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.web.http.redirections.entrypoint.to=websecure
+  #     - --entrypoints.web.http.redirections.entrypoint.scheme=https
+  #     - --entrypoints.websecure.address=:443
+  #     - --entrypoints.websecure.http.tls=true
 
   # Landing page service with public access via Traefik
   landing-page:
@@ -45,13 +45,7 @@ services:
       - ./configs/landing-page/app.js:/usr/share/nginx/html/app.js:ro
       - ./configs/landing-page/config.json:/usr/share/nginx/html/config.json:ro
       - ./configs/landing-page/services.json:/usr/share/nginx/html/services.json:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.landing-public.rule=Host(`home.nicstack.dev`)"
-      - "traefik.http.routers.landing-public.entrypoints=websecure"
-      - "traefik.http.routers.landing-public.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.landing-public.service=landing-page-svc"
-      - "traefik.http.services.landing-page-svc.loadbalancer.server.port=80"
+
     networks:
       - infra_network
 
@@ -121,16 +115,16 @@ services:
 
 
 
-  # Private landing page - only accessible via Tailscale
-  private-landing:
-    image: nginx:alpine
-    container_name: private-landing
+
+  # Homer - private dashboard for Tailscale access
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
     restart: unless-stopped
     ports:
-      - "8081:80"  # Exposed for Tailscale access
+      - "8082:8080"  # Exposed for Tailscale access
     volumes:
-      - ./configs/private-landing/index.html:/usr/share/nginx/html/index.html:ro
-      - ./configs/private-landing/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./configs/homer:/www/assets  # Place your config.yml and custom assets here
     networks:
       - infra_network
 

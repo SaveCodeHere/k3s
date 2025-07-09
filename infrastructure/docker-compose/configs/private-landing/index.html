@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Services - Nicstack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .service-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .service-description {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .service-url {
+            font-size: 0.8em;
+            color: #999;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .system-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .system-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .status-online {
+            color: #28a745;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #28a745;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Private Services</h1>
+        <p class="subtitle">Secure access to your infrastructure via Tailscale</p>
+        
+        <div class="services-grid">
+            <a href="https://nicstack.tail16ca22.ts.net:8080" class="service-card" target="_blank">
+                <span class="service-icon">🌐</span>
+                <div class="service-title">Traefik Dashboard</div>
+                <div class="service-description">Reverse proxy management and routing overview</div>
+                <div class="service-url">:8080</div>
+            </a>
+            
+            <a href="https://nicstack.tail16ca22.ts.net:9000" class="service-card" target="_blank">
+                <span class="service-icon">🐳</span>
+                <div class="service-title">Portainer</div>
+                <div class="service-description">Docker container management and monitoring</div>
+                <div class="service-url">:9000</div>
+            </a>
+            
+            <a href="http://nicstack.tail16ca22.ts.net:80/admin" class="service-card" target="_blank">
+                <span class="service-icon">🛡️</span>
+                <div class="service-title">Pi-hole</div>
+                <div class="service-description">DNS-based ad blocking and network filtering</div>
+                <div class="service-url">:80/admin</div>
+            </a>
+            
+            <a href="https://nicstack.tail16ca22.ts.net:8200" class="service-card" target="_blank">
+                <span class="service-icon">🔐</span>
+                <div class="service-title">Vault</div>
+                <div class="service-description">Secrets management and secure storage</div>
+                <div class="service-url">:8200</div>
+            </a>
+        </div>
+
+        <div class="system-info">
+            <h3>System Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Tailscale Node</div>
+                    <div class="info-value">nicstack.tail16ca22.ts.net</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Internal IP</div>
+                    <div class="info-value">100.68.155.73</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">
+                        <span class="status-indicator"></span>
+                        <span class="status-online">Online</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div class="info-value">Copenhagen, DK</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple health check for visual feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            // You could add simple health checks here if needed
+            console.log('Private services dashboard loaded');
+            
+            // Optional: Add click tracking or health status checks
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    console.log('Accessing:', this.querySelector('.service-title').textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
